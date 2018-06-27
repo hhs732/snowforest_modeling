@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import itertools
 import csv
 #%% hru names
-hruidxID = [111]
+hruidxID = list(np.arange(101,133))
 hru_num = np.size(hruidxID)
 #%% #Sagehen creek basin forcing data (tower 1)
 scFD = Dataset('shT1_force1_2.nc')
