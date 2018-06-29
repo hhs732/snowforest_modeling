@@ -3,36 +3,66 @@
 import numpy as np
 from netCDF4 import Dataset
 import itertools
+#%%
+#pt = Dataset('C:/Users/summaTestCases_2.x/settings/wrrPaperTestCases/figure09/summa_zParamTrial_lumpedTopmodel.nc')
+#la = Dataset('C:/Users/summaTestCases_2.x/settings/wrrPaperTestCases/figure09/summa_zLocalAttributes_riparianAspen.nc')
+#for j in pt.variables:
+#    print j
+#for j in la.variables:
+#    print j
+#for varname in pt.variables.keys():
+#    var = pt.variables[varname]
+#    print (varname, var.dtype, var.dimensions, var.shape)
+#for varname in la.variables.keys():
+#    var = la.variables[varname]
+#    print (varname, var.dtype, var.dimensions, var.shape)
+
+#print la.variables['vegTypeIndex'][:]
+#print la.variables['mHeight'][:]
+#
+#print pt.variables['winterSAI'][:]
+#print pt.variables['summerLAI'][:]
+#print pt.variables['heightCanopyTop'][:]
+#print pt.variables['heightCanopyBottom'][:]
 #%%  all parameters
 #20,1, 'SHDFAC NROOT   RS      RGL      HS      SNUP  MAXALB   LAIMIN  LAIMAX   EMISSMIN EMISSMAX ALBEDOMIN ALBEDOMAX   Z0MIN    Z0MAX'
 #14,     .70,   4,    125.,    30.,   47.35,   0.08,    52.,    5.00,   6.40,   .950,    .950,     .12,      .12,      .50,     .50,     'Evergreen Needleleaf Forest'  
-p1 = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5]#1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]# #LAIMIN
-p2 = [5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]#5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]# #LAIMAX
-p3 = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]#0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5] #winterSAI
-p4 = [4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]#2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2] #summerLAI
 
-p5 = [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2] #rootingDepth
-p6 = [20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20] #heightCanopyTop
-p7 = [0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05] #heightCanopyBottom
-p8 = [60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60] #newSnowDenMin 
+#p1 = [0.5,0.5,0.5,0.5] #LAIMIN
+#p2 = [5,5,5,5] #LAIMAX
 
-p9 = [0.5,0.4,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.4,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5] #throughfallScaleSnow
-p10 = [800,800,1000,800,800,800,800,800,800,800,800,800,800,800,800,800,800,800,1000,800,800,800,800,800,800,800,800,800,800,800,800,800] #specificHeatVeg           |     874.0000 |     500.0000 |    1500.0000
-p11 = [30,30,30,20,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,20,30,30,30,30,30,30,30,30,30,30,30,30] #maxMassVegetation         |      25.0000 |       1.0000 |      50.0000
-p12 = [6,6,6,6,7,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,7,6,6,6,6,6,6,6,6,6,6,6] #refInterceptCapSnow       |       6.6000 |       1.0000 |      10.0000
+p3 = [1,1,1,1] #winterSAI
+p4 = [6,5.5,5,4] #summerLAI
 
-p13 = [1000000,1000000,1000000,1000000,1000000,700000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,700000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000,1000000] #[500000, 1000000, 1300000] ##albedoDecayRate |       1.0d+6 |       0.1d+6 |       5.0d+6 
-p14 = [0.9,0.9,0.9,0.9,0.9,0.9,0.94,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.94,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9] #[0.8, 0.9, 0.94] #albedoMaxVisible |       0.9500 |       0.7000 |       0.9500
-p15 = [0.65,0.65,0.65,0.65,0.65,0.65,0.65,0.7,0.65,0.65,0.65,0.65,0.65,0.65,0.65,0.65,0.65,0.65,0.65,0.65,0.65,0.65,0.65,0.7,0.65,0.65,0.65,0.65,0.65,0.65,0.65,0.65] #[0.6, 0.68, 0.74] #albedoMinVisible |       0.7500 |       0.5000 |       0.7500
-p16 = [0.65,0.65,0.65,0.65,0.65,0.65,0.65,0.65,0.6,0.65,0.65,0.65,0.65,0.65,0.65,0.65,0.65,0.65,0.65,0.65,0.65,0.65,0.65,0.65,0.6,0.65,0.65,0.65,0.65,0.65,0.65,0.65] #[0.55, 0.65, 0.7] #albedoMaxNearIR |       0.6500 |       0.5000 |       0.7500
-p17 = [0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.35,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.35,0.3,0.3,0.3,0.3,0.3,0.3] #[0.2, 0.3, 0.4] #albedoMinNearIR  |       0.3000 |       0.1500 |       0.4500
-p18 = [3,3,3,3,3,3,3,3,3,3,5,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,5,3,3,3,3,3] # 1, 3, 6] #albedoRefresh |       1.0000 |       1.0000 |      10.0000
+p5 = [3,3,3,3] #rootingDepth
+p6 = [20,20,15,15] #heightCanopyTop
+p7 = [3,3,2,2] #heightCanopyBottom
+#p8 = [0.5,0.5,0.5,0.5] #throughfallScaleSnow
+#p9 = [800,800,800,800] #specificHeatVeg           |     874.0000 |     500.0000 |    1500.0000
+#p10 = [30,25,20,20] #maxMassVegetation         |      25.0000 |       1.0000 |      50.0000
+#p11 = [6,6,6,6] #refInterceptCapSnow       |       6.6000 |       1.0000 |      10.0000
 
-p19 = [0.001,0.001,0.001,0.001,0.001,0.001,0.001,0.001,0.001,0.001,0.001,0.001,0.001,0.002,0.001,0.001,0.001,0.001,0.001,0.001,0.001,0.001,0.001,0.001,0.001,0.001,0.001,0.001,0.001,0.002,0.001,0.001] #[0.001, 0.002] #z0Snow
-p20 = [0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.02,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.02,0.01,0.01,0.01,0.01] #z0Canopy                  |       0.0200 |       0.0010 |      10.0000
-p21 = [0.28,0.28,0.28,0.28,0.28,0.28,0.28,0.28,0.28,0.28,0.28,0.28,0.4,0.28,0.28,0.28,0.28,0.28,0.28,0.28,0.28,0.28,0.28,0.28,0.28,0.28,0.28,0.28,0.4,0.28,0.28,0.28]	#windReductionParam        |       0.2800 |       0.0000 |       1.0000
-p22 = [3,3,3,3,3,3,3,3,3,3,3,3,3,3,4,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,4,3] #2, 3, 4] #mw_exp exponent for meltwater flow
-p23 = [0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.5,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.5] #0.2, 0.4 , 0.6] #fixedThermalCond_snow
+#leafDimension             |       0.0400 |       0.0100 |       0.1000
+#throughfallScaleRain      |       0.5000 |       0.1000 |       0.9000
+#refInterceptCapRain       |       1.0000 |       0.0100 |       1.0000
+#snowUnloadingCoeff        |       0.0000 |       0.0000 |       1.5d-6
+#ratioDrip2Unloading       |       0.4000 |       0.0000 |       1.0000
+
+
+p12 = [60,60,60,60] #newSnowDenMin 
+
+p13 = [1000000,1000000,1000000,1000000] #[500000, 1000000, 1300000] ##albedoDecayRate |       1.0d+6 |       0.1d+6 |       5.0d+6 
+p14 = [0.9,0.9,0.9,0.9] #[0.8, 0.9, 0.94] #albedoMaxVisible |       0.9500 |       0.7000 |       0.9500
+p15 = [0.65,0.65,0.65,0.65] #[0.6, 0.68, 0.74] #albedoMinVisible |       0.7500 |       0.5000 |       0.7500
+p16 = [0.65,0.65,0.65,0.65] #[0.55, 0.65, 0.7] #albedoMaxNearIR |       0.6500 |       0.5000 |       0.7500
+p17 = [0.3,0.3,0.3,0.3] #[0.2, 0.3, 0.4] #albedoMinNearIR  |       0.3000 |       0.1500 |       0.4500
+p18 = [3,3,3,3] # 1, 3, 6] #albedoRefresh |       1.0000 |       1.0000 |      10.0000
+
+p19 = [0.001,0.001,0.001,0.001] #[0.001, 0.002] #z0Snow
+p20 = [0.01,0.01,0.01,0.01] #z0Canopy                  |       0.0200 |       0.0010 |      10.0000
+p21 = [0.28,0.28,0.28,0.28]	#windReductionParam        |       0.2800 |       0.0000 |       1.0000
+p22 = [3,3,3,3] #2, 3, 4] #mw_exp exponent for meltwater flow
+p23 = [0.4,0.4,0.4,0.4] #0.2, 0.4 , 0.6] #fixedThermalCond_snow
 
 #p21 = [0.700, 1.000, 1.500] #Mahrt87_eScale  
 #p14 = [0.040, 0.060, 0.080] #Fcapil
@@ -42,7 +72,7 @@ p23 = [0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.5,0.4,0.4,0
 #p20 = [5.200, 5.300, 5.400] #Louis79_cStar 
 #p15 = [105] #51, 70, 105] #constSnowDen 70.00, 100.0, 170.0    55 56 57 
 
-hruidxID = list(np.arange(101,133))
+hruidxID = list(np.arange(101,105))
 hru_num = np.size(hruidxID)
 #%% #create new paramtrail.nc file and adding vaiables to it --- summa_zParamTrial_variableDecayRate_test
 paramfile = Dataset("summa_zParamTrial_variableDecayRate_sc.nc",'w',format='NETCDF3_CLASSIC') #create new paramtrail.nc file
@@ -50,9 +80,10 @@ paramfile = Dataset("summa_zParamTrial_variableDecayRate_sc.nc",'w',format='NETC
 hru = paramfile.createDimension('hru', None)
 hidx = paramfile.createVariable('hruIndex', np.float64,('hru',)) # add hruIndex variable
 
-param_nam_list = ['LAIMIN','LAIMAX','winterSAI','summerLAI','rootingDepth','heightCanopyTop','heightCanopyBottom','newSnowDenMin',
-                  'throughfallScaleSnow','specificHeatVeg','maxMassVegetation','refInterceptCapSnow',
-                  'albedoDecayRate', 'albedoMaxVisible', 'albedoMinVisible', 'albedoMaxNearIR', 'albedoMinNearIR', 'albedoRefresh', 
+param_nam_list = [#'LAIMIN','LAIMAX',
+                  'winterSAI','summerLAI','rootingDepth','heightCanopyTop','heightCanopyBottom',
+                  #'throughfallScaleSnow','specificHeatVeg','maxMassVegetation','refInterceptCapSnow',
+                  'newSnowDenMin','albedoDecayRate', 'albedoMaxVisible', 'albedoMinVisible', 'albedoMaxNearIR', 'albedoMinNearIR', 'albedoRefresh', 
                   'z0Snow', 'z0Canopy', 'windReductionParam', 'mw_exp', 'fixedThermalCond_snow'] 
 
 for param in param_nam_list:
@@ -77,20 +108,20 @@ for varname in pt.variables.keys():
     except IndexError: # size of data array does not conform to slice
         pass
 #%% creating changing variables and adding values
-paramfile.variables['LAIMIN'][:]=p1
-paramfile.variables['LAIMAX'][:]=p2
+#paramfile.variables['LAIMIN'][:]=p1
+#paramfile.variables['LAIMAX'][:]=p2
 paramfile.variables['winterSAI'][:]=p3
 paramfile.variables['summerLAI'][:]=p4
 paramfile.variables['rootingDepth'][:]=p5
 paramfile.variables['heightCanopyTop'][:]=p6
 paramfile.variables['heightCanopyBottom'][:]=p7
-paramfile.variables['newSnowDenMin'][:]=p8
 
-paramfile.variables['throughfallScaleSnow'][:]=p9
-paramfile.variables['specificHeatVeg'][:]=p10
-paramfile.variables['maxMassVegetation'][:]=p11
-paramfile.variables['refInterceptCapSnow'][:]=p12
+#paramfile.variables['throughfallScaleSnow'][:]=p8
+#paramfile.variables['specificHeatVeg'][:]=p9
+#paramfile.variables['maxMassVegetation'][:]=p10
+#paramfile.variables['refInterceptCapSnow'][:]=p11
 
+paramfile.variables['newSnowDenMin'][:]=p12
 paramfile.variables['albedoDecayRate'][:]=p13
 paramfile.variables['albedoMaxVisible'][:]=p14
 paramfile.variables['albedoMinVisible'][:]=p15
@@ -115,7 +146,7 @@ paramfile.close()
 #%% 
 varcheck = Dataset ('summa_zParamTrial_variableDecayRate_sc.nc')
 print varcheck.variables['theta_res'][:]
-check2 =  varcheck.variables['albedoMaxNearIR'][:]
+check2 =  varcheck.variables['summerLAI'][:]
 #%% # local attributes file
 local_atrbt = Dataset("summa_zLocalAttributes_sagehenCreek.nc",'w',format='NETCDF3_CLASSIC')
 # define dimensions 
@@ -166,8 +197,12 @@ lat[:] = len_lat
 lon[:] = len_lon
 
 vegindx_sc = np.array([14])
-vegindx_lon= np.repeat(vegindx_sc[:,np.newaxis], hru_num, axis=1); vegindx_lon=vegindx_lon.reshape(hru_num,)
+vegindx_lon = np.repeat(vegindx_sc[:,np.newaxis], hru_num, axis=1); vegindx_lon=vegindx_lon.reshape(hru_num,)
 vegindx[:] = vegindx_lon
+
+mHeight_sc = np.array([30,30,25,25]) #mHeight
+mh[:] = mHeight_sc
+
 #%% # get the hru, gru, and hru2gru in local_atribute file
 newgru = np.array([1111])
 local_atrbt.variables['gruId'][:] = newgru
@@ -183,6 +218,7 @@ local_atrbt.close()
 lacheck = Dataset('summa_zLocalAttributes_sagehenCreek.nc')
 print lacheck.variables['vegTypeIndex'][:]
 print lacheck.variables['latitude'][:]
+print lacheck.variables['mHeight'][:]
 
 #for j in laCheck.variables:
 #    print j
