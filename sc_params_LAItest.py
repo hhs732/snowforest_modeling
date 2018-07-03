@@ -1,22 +1,23 @@
-###       /bin/bash runTestCases_docker.sh   snwDensity snwDensity
+###       /bin/bash runTestCases_docker2.sh   snwDensity snwDensity
 # 2007 - 2008 as wet year for sensirivity analysis 1st step
+# I thinking having five scenarios, open, dense and tall, dense and short, sparse and tall, sparse and short. Assuming they are sensitive.
 import numpy as np
 from netCDF4 import Dataset
 import itertools
 #%%
-#pt = Dataset('C:/Users/summaTestCases_2.x/settings/wrrPaperTestCases/figure09/summa_zParamTrial_lumpedTopmodel.nc')
-#la = Dataset('C:/Users/summaTestCases_2.x/settings/wrrPaperTestCases/figure09/summa_zLocalAttributes_riparianAspen.nc')
-#for j in pt.variables:
-#    print j
-#for j in la.variables:
-#    print j
+#pt = Dataset('C:/Users/summaTestCases_2.x/settings/wrrPaperTestCases/figure09/summa_zParamTrial_distributedTopmodel.nc')
+#la = Dataset('C:/Users/summaTestCases_2.x/settings/wrrPaperTestCases/figure09/summa_zLocalAttributes_fullDist.nc')
+##for j in pt.variables:
+##    print j
+##for j in la.variables:
+##    print j
 #for varname in pt.variables.keys():
 #    var = pt.variables[varname]
 #    print (varname, var.dtype, var.dimensions, var.shape)
 #for varname in la.variables.keys():
 #    var = la.variables[varname]
 #    print (varname, var.dtype, var.dimensions, var.shape)
-
+#
 #print la.variables['vegTypeIndex'][:]
 #print la.variables['mHeight'][:]
 #
@@ -31,38 +32,36 @@ import itertools
 #p1 = [0.5,0.5,0.5,0.5] #LAIMIN
 #p2 = [5,5,5,5] #LAIMAX
 
-p3 = [1,1,1,1] #winterSAI
-p4 = [6,5.5,5,4] #summerLAI
-
+p3 = [0.45,0.45,0.45,0.45] #winterSAI
+p4 = [6,4,2,1] #summerLAI
 p5 = [3,3,3,3] #rootingDepth
-p6 = [20,20,15,15] #heightCanopyTop
-p7 = [3,3,2,2] #heightCanopyBottom
-#p8 = [0.5,0.5,0.5,0.5] #throughfallScaleSnow
-#p9 = [800,800,800,800] #specificHeatVeg           |     874.0000 |     500.0000 |    1500.0000
-#p10 = [30,25,20,20] #maxMassVegetation         |      25.0000 |       1.0000 |      50.0000
-#p11 = [6,6,6,6] #refInterceptCapSnow       |       6.6000 |       1.0000 |      10.0000
+p6 = [1,1,1,1] #rootDistExp
+p7 = [25,25,20,20] #heightCanopyTop
+p8 = [3,3,2.5,2.5] #heightCanopyBottom
+#p9 = [0.5,0.5,0.5,0.5] #throughfallScaleSnow
+#p10 = [800,800,800,800] #specificHeatVeg           |     874.0000 |     500.0000 |    1500.0000
+#p11 = [30,25,20,20] #maxMassVegetation         |      25.0000 |       1.0000 |      50.0000
 
-#leafDimension             |       0.0400 |       0.0100 |       0.1000
-#throughfallScaleRain      |       0.5000 |       0.1000 |       0.9000
-#refInterceptCapRain       |       1.0000 |       0.0100 |       1.0000
-#snowUnloadingCoeff        |       0.0000 |       0.0000 |       1.5d-6
-#ratioDrip2Unloading       |       0.4000 |       0.0000 |       1.0000
+#p12 = [6,6,6,6] #refInterceptCapSnow       |       6.6000 |       1.0000 |      10.0000
+#p13 = [] #leafDimension             |       0.0400 |       0.0100 |       0.1000
+#p14 = [] #throughfallScaleRain      |       0.5000 |       0.1000 |       0.9000
+#p15 = [] #refInterceptCapRain       |       1.0000 |       0.0100 |       1.0000
+#p16 = [] #snowUnloadingCoeff        |       0.0000 |       0.0000 |       1.5d-6
+#p17 = [] #ratioDrip2Unloading       |       0.4000 |       0.0000 |       1.0000
 
+p18 = [60,60,60,60] #newSnowDenMin 
+p19 = [1000000,1000000,1000000,1000000] #[500000, 1000000, 1300000] ##albedoDecayRate |       1.0d+6 |       0.1d+6 |       5.0d+6 
+p20 = [0.94,0.94,0.94,0.94] #[0.8, 0.9, 0.94] #albedoMaxVisible |       0.9500 |       0.7000 |       0.9500
+p21 = [0.7,0.7,0.7,0.7] #[0.6, 0.68, 0.74] #albedoMinVisible |       0.7500 |       0.5000 |       0.7500
+p22 = [0.65,0.65,0.65,0.65] #[0.55, 0.65, 0.7] #albedoMaxNearIR |       0.6500 |       0.5000 |       0.7500
+p23 = [0.3,0.3,0.3,0.3] #[0.2, 0.3, 0.4] #albedoMinNearIR  |       0.3000 |       0.1500 |       0.4500
+p24 = [2,2,2,2] # 1, 3, 6] #albedoRefresh |       1.0000 |       1.0000 |      10.0000
 
-p12 = [60,60,60,60] #newSnowDenMin 
-
-p13 = [1000000,1000000,1000000,1000000] #[500000, 1000000, 1300000] ##albedoDecayRate |       1.0d+6 |       0.1d+6 |       5.0d+6 
-p14 = [0.9,0.9,0.9,0.9] #[0.8, 0.9, 0.94] #albedoMaxVisible |       0.9500 |       0.7000 |       0.9500
-p15 = [0.65,0.65,0.65,0.65] #[0.6, 0.68, 0.74] #albedoMinVisible |       0.7500 |       0.5000 |       0.7500
-p16 = [0.65,0.65,0.65,0.65] #[0.55, 0.65, 0.7] #albedoMaxNearIR |       0.6500 |       0.5000 |       0.7500
-p17 = [0.3,0.3,0.3,0.3] #[0.2, 0.3, 0.4] #albedoMinNearIR  |       0.3000 |       0.1500 |       0.4500
-p18 = [3,3,3,3] # 1, 3, 6] #albedoRefresh |       1.0000 |       1.0000 |      10.0000
-
-p19 = [0.001,0.001,0.001,0.001] #[0.001, 0.002] #z0Snow
-p20 = [0.01,0.01,0.01,0.01] #z0Canopy                  |       0.0200 |       0.0010 |      10.0000
-p21 = [0.28,0.28,0.28,0.28]	#windReductionParam        |       0.2800 |       0.0000 |       1.0000
-p22 = [3,3,3,3] #2, 3, 4] #mw_exp exponent for meltwater flow
-p23 = [0.4,0.4,0.4,0.4] #0.2, 0.4 , 0.6] #fixedThermalCond_snow
+p25 = [0.001,0.001,0.001,0.001] #[0.001, 0.002] #z0Snow
+p26 = [0.03,0.03,0.03,0.03] #z0Canopy                  |       0.0200 |       0.0010 |      10.0000
+p27 = [0.28,0.28,0.28,0.28]	#windReductionParam        |       0.2800 |       0.0000 |       1.0000
+p28 = [3,3,3,3] #2, 3, 4] #mw_exp exponent for meltwater flow
+p29 = [0.4,0.4,0.4,0.4] #0.2, 0.4 , 0.6] #fixedThermalCond_snow
 
 #p21 = [0.700, 1.000, 1.500] #Mahrt87_eScale  
 #p14 = [0.040, 0.060, 0.080] #Fcapil
@@ -81,7 +80,7 @@ hru = paramfile.createDimension('hru', None)
 hidx = paramfile.createVariable('hruIndex', np.float64,('hru',)) # add hruIndex variable
 
 param_nam_list = [#'LAIMIN','LAIMAX',
-                  'winterSAI','summerLAI','rootingDepth','heightCanopyTop','heightCanopyBottom',
+                  'winterSAI','summerLAI','rootingDepth','rootDistExp','heightCanopyTop','heightCanopyBottom',
                   #'throughfallScaleSnow','specificHeatVeg','maxMassVegetation','refInterceptCapSnow',
                   'newSnowDenMin','albedoDecayRate', 'albedoMaxVisible', 'albedoMinVisible', 'albedoMaxNearIR', 'albedoMinNearIR', 'albedoRefresh', 
                   'z0Snow', 'z0Canopy', 'windReductionParam', 'mw_exp', 'fixedThermalCond_snow'] 
@@ -89,7 +88,7 @@ param_nam_list = [#'LAIMIN','LAIMAX',
 for param in param_nam_list:
     paramfile.createVariable(param, np.float64,('hru',))
 
-constant_params = ['frozenPrecipMultip','rootDistExp','theta_sat','theta_res','vGn_alpha','vGn_n','k_soil','critSoilWilting','critSoilTranspire']
+constant_params = ['frozenPrecipMultip','theta_sat','theta_res','vGn_alpha','vGn_n','k_soil','critSoilWilting','critSoilTranspire']
 for params in constant_params:
     paramfile.createVariable(params, np.float64,('hru',))
 #paramfile.close()
@@ -97,8 +96,11 @@ for params in constant_params:
 pt = Dataset('summa_zParamTrial_variableDecayRate.nc')
 la = Dataset('summa_zLocalAttributes_senatorSheltered.nc') #('settings/wrrPaperTestCases/figure07/summa_zLocalAttributes_riparianAspen.nc')
 ic = Dataset('summa_zInitialCond.nc') #('settings/wrrPaperTestCases/figure07/summa_zInitialCond.nc')
-for j in ic.variables:
+for j in pt.variables:
     print j
+print pt.variables['rootingDepth'][:]
+print pt.variables['rootDistExp'][:]
+
 #%% # add values for the constant variables in HRUs for parameter Trail file
 for varname in pt.variables.keys():
     var = pt.variables[varname][0]
@@ -113,27 +115,28 @@ for varname in pt.variables.keys():
 paramfile.variables['winterSAI'][:]=p3
 paramfile.variables['summerLAI'][:]=p4
 paramfile.variables['rootingDepth'][:]=p5
-paramfile.variables['heightCanopyTop'][:]=p6
-paramfile.variables['heightCanopyBottom'][:]=p7
+paramfile.variables['rootDistExp'][:]=p6
+paramfile.variables['heightCanopyTop'][:]=p7
+paramfile.variables['heightCanopyBottom'][:]=p8
 
 #paramfile.variables['throughfallScaleSnow'][:]=p8
 #paramfile.variables['specificHeatVeg'][:]=p9
 #paramfile.variables['maxMassVegetation'][:]=p10
 #paramfile.variables['refInterceptCapSnow'][:]=p11
 
-paramfile.variables['newSnowDenMin'][:]=p12
-paramfile.variables['albedoDecayRate'][:]=p13
-paramfile.variables['albedoMaxVisible'][:]=p14
-paramfile.variables['albedoMinVisible'][:]=p15
-paramfile.variables['albedoMaxNearIR'][:]=p16
-paramfile.variables['albedoMinNearIR'][:]=p17
-paramfile.variables['albedoRefresh'][:]=p18
+paramfile.variables['newSnowDenMin'][:]=p18
+paramfile.variables['albedoDecayRate'][:]=p19
+paramfile.variables['albedoMaxVisible'][:]=p20
+paramfile.variables['albedoMinVisible'][:]=p21
+paramfile.variables['albedoMaxNearIR'][:]=p22
+paramfile.variables['albedoMinNearIR'][:]=p23
+paramfile.variables['albedoRefresh'][:]=p24
 
-paramfile.variables['z0Snow'][:]=p19
-paramfile.variables['z0Canopy'][:]=p20
-paramfile.variables['windReductionParam'][:]=p21
-paramfile.variables['mw_exp'][:]=p22
-paramfile.variables['fixedThermalCond_snow'][:]=p23
+paramfile.variables['z0Snow'][:]=p25
+paramfile.variables['z0Canopy'][:]=p26
+paramfile.variables['windReductionParam'][:]=p27
+paramfile.variables['mw_exp'][:]=p28
+paramfile.variables['fixedThermalCond_snow'][:]=p29
 
 paramfile.variables['hruIndex'][:]=hruidxID
 

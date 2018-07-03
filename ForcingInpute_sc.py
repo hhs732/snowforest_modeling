@@ -17,6 +17,11 @@ for varname in scFD.variables.keys():
 for dimname in scFD.dimensions.keys():
     dim = scFD.dimensions[dimname]
     print(dimname, len(dim), dim.isunlimited())
+#%%
+print scFD.variables['LWRadAtm'][7:19]
+print scFD.variables['SWRadAtm'][7:19]
+print scFD.variables['SWRadAtm'].units
+
 #%% sagehen timming
 TimeSc = scFD.variables['time'][:] # get values
 t_unitS = scFD.variables['time'].units # get unit  "days since 1950-01-01T00:00:00Z"

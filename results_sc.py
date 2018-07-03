@@ -30,7 +30,7 @@ swe_obs_df.set_index(sc_swe_obs_date,inplace=True)
 #%%
 hruidxID = list(np.arange(101,105))
 hru_num = np.size(hruidxID)
-out_names = ['cs']#,'us','uj','cj','cs2','cs3']
+out_names = ['lm2p2']#, 'sm1', 'sm2', 'lm1', 'lm2']
 paramModel = (np.size(out_names))*(hru_num)
 hru_names =[]
 for i in out_names:
@@ -38,7 +38,12 @@ for i in out_names:
 hru_names1 = np.reshape(hru_names,(paramModel,1))
 hru_names_df = pd.DataFrame (hru_names1)
 #%% reading output_swe files
-av_ncfiles = ["sagehen1_2015-2016_senatorVariableDecayRate_1.nc", 
+av_ncfiles = [
+#              "sagehen_sm1_2015-2016_senatorVariableDecayRate_1.nc",
+#              "sagehen_lm1_2015-2016_senatorVariableDecayRate_1.nc",
+#              "sagehen_sm2_2015-2016_senatorVariableDecayRate_1.nc",
+#              "sagehen_lm2_2015-2016_senatorVariableDecayRate_1.nc"
+              "sagehen_lm2_p2_2015-2016_senatorVariableDecayRate_1.nc"
               ]
 av_all = []
 for ncfiles in av_ncfiles:
@@ -76,7 +81,7 @@ tvalueSc = num2date(TimeSc, units=t_unitSc, calendar=t_cal)
 DateSc = [i.strftime("%Y-%m-%d %H:%M") for i in tvalueSc] # -%d %H:%M to display dates as string #i.strftime("%Y-%m-%d %H:%M")        
 #%% day of snow disappearance-final output
 av_swe_df.set_index(pd.DatetimeIndex(DateSc),inplace=True)
-counter = pd.DataFrame(np.arange(0,np.size(av_swe_df['cs101'])),columns=['counter'])
+counter = pd.DataFrame(np.arange(0,np.size(av_swe_df['lm2p2101'])),columns=['counter'])
 counter.set_index(av_swe_df.index,inplace=True)
 av_swe_df2 = pd.concat([counter, av_swe_df], axis=1)
 #%%   
@@ -139,8 +144,9 @@ plt.plot(swe_obs_df, 'k', markersize=10)
 plt.title('rainbow_SWE', position=(0.04, 0.88), ha='left', fontsize=40)
 plt.xlabel('Time 2015-2016', fontsize=30)
 plt.ylabel('SWE(mm)', fontsize=30)
+plt.legend()
 #plt.show()
-plt.savefig('swecs.png')
+plt.savefig('swelm2p2.png')
 #%%
 
 
