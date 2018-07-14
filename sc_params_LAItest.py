@@ -33,14 +33,14 @@ import itertools
 #p2 = [5,5,5,5] #LAIMAX
 
 p3 = [0.45,0.45,0.45,0.45] #winterSAI
-p4 = [6,4,2,1] #summerLAI
+p4 = [5,2,5,2] #summerLAI
 p5 = [3,3,3,3] #rootingDepth
 p6 = [1,1,1,1] #rootDistExp
-p7 = [25,25,20,20] #heightCanopyTop
-p8 = [3,3,2.5,2.5] #heightCanopyBottom
-#p9 = [0.5,0.5,0.5,0.5] #throughfallScaleSnow
+p7 = [25,25,10,10] #heightCanopyTop
+p8 = [3,3,2.5,2.5] #heightCanopyBottom 20% of top
+#p9 = [0.5,0.5,0.5,0.5] #throughfallScaleSnow sensitivy
 #p10 = [800,800,800,800] #specificHeatVeg           |     874.0000 |     500.0000 |    1500.0000
-#p11 = [30,25,20,20] #maxMassVegetation         |      25.0000 |       1.0000 |      50.0000
+#p11 = [35,20,20,20] #maxMassVegetation         |      25.0000 |       1.0000 |      50.0000
 
 #p12 = [6,6,6,6] #refInterceptCapSnow       |       6.6000 |       1.0000 |      10.0000
 #p13 = [] #leafDimension             |       0.0400 |       0.0100 |       0.1000
