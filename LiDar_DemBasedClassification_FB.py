@@ -150,28 +150,57 @@ def differenceBetwee2classes (primaryClass,secondNumClass): #to define nolowVegC
         cleanClass.append(primaryClass[indx])
     return cleanClass, cleanNumClass
 #%% DEM file (.tif) reading (test)
+#filename = "lidardata\demvegTest.tif" #path to raster
+#demset = gdal.Open(filename)
+#lyr = gdal.GDALDEMProcessingOptions_swigregister(demset)
+#
+#dem_hs_ds = gdal.DEMProcessing('', demset, 'hillshade', format='MEM')
+#
+#band = demset.GetRasterBand(1)
+#BandType=gdal.GetDataTypeName(band.DataType)
+#minBand = band.GetMinimum()
+#maxBand = band.GetMaximum()
+#minMax = band.ComputeRasterMinMax(True)
+#
+#cols = demset.RasterXSize
+#rows = demset.RasterYSize
+#print("Size is {} x {} x {}".format(demset.RasterXSize,demset.RasterYSize,demset.RasterCount))
 
+#elevationMissNo = 1960.
+#pathName = 'lidardata\dem_bareearth_test.png'
+#x0, y0, elevation, nrows, ncols = readPlotDEM(filename,elevationMissNo,pathName)
+#%% LiDar Data reading
+#infileVeg = ls.file.File("lidardata\lasvegTest.las", mode="r")
+## Grab all of the points from the file.
+#point_records = infileVeg.points
+#
+#scaled_x = scaled_x_dimension(infileVeg)
+#
+## Find out what the point format looks like.
+#pointformat = infileVeg.point_format
+#for spec in infileVeg.point_format:
+#    print(spec.name)
+#
+##Lets take a look at the header also.
+#headerformat = infileVeg.header.header_format
+#for spec in headerformat:
+#    print(spec.name)
+#%%we’re interested only in the last return from each pulse in order to do ground detection. 
+#num_returns = infileVeg.num_returns
+#return_num = infileVeg.return_num
+#ground_points = infileVeg.points[num_returns == return_num]
+## list and array of groundpoints from lidar file
+#groundPoints_ls = ground_points.tolist()
+#groundPoints_arr = []
+#for i in range (len(groundPoints_ls)):
+#    GPlist = np.array(groundPoints_ls[i])
+#    groundPoints_arr.append(GPlist[0,0:3])
+#groundPoints_arr = np.array(groundPoints_arr)
+#groundPoints_lidar = groundPoints_arr.copy()
+#%% DEM file (.tif) reading and creating centroid (ground points) from Dem files (test)
 filename = "lidardata\demvegTest.tif" #path to raster
-demset = gdal.Open(filename)
-lyr = gdal.GDALDEMProcessingOptions_swigregister(demset)
-
-dem_hs_ds = gdal.DEMProcessing('', demset, 'hillshade', format='MEM')
-
-band = demset.GetRasterBand(1)
-BandType=gdal.GetDataTypeName(band.DataType)
-minBand = band.GetMinimum()
-maxBand = band.GetMaximum()
-minMax = band.ComputeRasterMinMax(True)
-
-cols = demset.RasterXSize
-rows = demset.RasterYSize
-print("Size is {} x {} x {}".format(demset.RasterXSize,demset.RasterYSize,demset.RasterCount))
-
 elevationMissNo = 1960.
 pathName = 'lidardata\dem_bareearth_test.png'
-x0, y0, elevation, nrows, ncols = readPlotDEM(filename,elevationMissNo,pathName)
-
-#%% creating centroid (ground points) from Dem files (test)
 dem_groundPoints = creatingCentroidGroundpointsFromDem(filename,elevationMissNo,pathName)
 
 #%% difference between 2 years dems (snow on and snow off)
@@ -186,41 +215,15 @@ ax1.scatter(dem_groundPointsSnow[:, 0], dem_groundPointsSnow[:, 1], dem_groundPo
 ax1.scatter(dem_groundPoints[:, 0], dem_groundPoints[:, 1], dem_groundPoints[:, 2])
 plt.legend()
 plt.savefig('lidardata\demscomaprison.png')
-#%% LiDar Data reading
+
+#%%# LiDar Data reading and Grab the scaled x, y, and z dimensions and stick them together in an nx3 numpy array
 infileVeg = ls.file.File("lidardata\lasvegTest.las", mode="r")
-# Grab all of the points from the file.
-point_records = infileVeg.points
 
-scaled_x = scaled_x_dimension(infileVeg)
-
-# Find out what the point format looks like.
-pointformat = infileVeg.point_format
-for spec in infileVeg.point_format:
-    print(spec.name)
-
-#Lets take a look at the header also.
-headerformat = infileVeg.header.header_format
-for spec in headerformat:
-    print(spec.name)
-#%%# Grab the scaled x, y, and z dimensions and stick them together in an nx3 numpy array
 coordsVeg = np.vstack((infileVeg.x, infileVeg.y, infileVeg.z)).T
 # calculating the nearest neighbors of a set of points, you might want to use a highly optimized package like FLANN 
 datasetVeg = np.vstack([infileVeg.X, infileVeg.Y, infileVeg.Z]).T
-minLat,maxLat = np.min(datasetVeg[:,0]),np.max(datasetVeg[:,0])
-minLon, maxLon = np.min(datasetVeg[:,1]),np.max(datasetVeg[:,1])
-#%%we’re interested only in the last return from each pulse in order to do ground detection. 
-num_returns = infileVeg.num_returns
-return_num = infileVeg.return_num
-ground_points = infileVeg.points[num_returns == return_num]
-# list and array of groundpoints from lidar file
-groundPoints_ls = ground_points.tolist()
-groundPoints_arr = []
-for i in range (len(groundPoints_ls)):
-    GPlist = np.array(groundPoints_ls[i])
-    groundPoints_arr.append(GPlist[0,0:3])
-groundPoints_arr = np.array(groundPoints_arr)
-groundPoints_lidar = groundPoints_arr.copy()
-
+#minLat,maxLat = np.min(datasetVeg[:,0]),np.max(datasetVeg[:,0])
+#minLon, maxLon = np.min(datasetVeg[:,1]),np.max(datasetVeg[:,1])
 #%% classification with new grountpoints from dem file
 centroids_new=dem_groundPoints[:,0:2]  
 k1 = np.size(dem_groundPoints[:,0])
@@ -255,6 +258,7 @@ negVegClass, negVegNumClass = defineSpecificClassLess (vegClass, 0)
 lowVegTreeClass, lowVegNumClass = defineLowVegClass(allTreeClass)
 
 # trees with no low blanches
+# "*************tall canopy no snow class*****************"
 nolowVegTreeClass, nolowVegTreeNumClass = differenceBetwee2classes (allTreeClass,lowVegNumClass)
 
 # open space (no trees, no return between 0.15 to 2)
@@ -263,9 +267,8 @@ allLowVegClass, allLowVegNumClass = defineLowVegClass(vegClass)
 
 #open places
 notOpenNumClass = list(set(allLowVegNumClass).union(set(treeNumClass)))
-
+# "******************open no snow class*******************"
 allOpenClass, allOpenNumClass = differenceBetwee2classes (vegClass,notOpenNumClass)
-
 #test=[]
 #for i in range (len(nolowVegTreeClass)):
 #    for j in range(len(nolowVegTreeClass[i])):
@@ -284,9 +287,7 @@ classesnow = clfs.classifications
 #%% test classification
 vegSnowClass, classes_rplcVS, pureVegsnowClass = lidarDiffGrndPoints(classesnow,dem_groundPoints)
 failclassSnow = classificationTest(pureVegsnowClass)
-
 vegSnowClass2, vegSnowNumClass = defineSpecificClassGreater (vegSnowClass, -1)
-
 #%% ploting
 fig3 = plt.figure(figsize=(20,15))
 ax3 = Axes3D(fig3)
@@ -296,8 +297,7 @@ ax3.scatter(coordsVeg[:, 0], coordsVeg[:, 1], coordsVeg[:, 2])
 ax3.legend()
 #for flcl in failclass2:
 #    ax3.scatter([x[0] for x in classes_rplc2[flcl]], [x[1] for x in classes_rplc2[flcl]])#, [x[2] for x in classesnow[flcl]])
-   
-plt.savefig('lidardata\dem_lidar_snow&veg.png')
+   plt.savefig('lidardata\dem_lidar_snow&veg.png')
 #%% raw classification
 rawClass = infileSnow.raw_classification
 return_arr = infileSnow.num_returns
@@ -307,21 +307,50 @@ return_arr = infileSnow.num_returns
 nosnowClass, noSnowNumClass = defineSpecificClassLess (vegSnowClass2, 0.15)
 #snow on the ground or on the trees
 allSnowClass, allSnowNumClass = differenceBetwee2classes (vegSnowClass2,noSnowNumClass)
-#snow on the ground or low branches 0.15< or 2>
-groundSnow0lowBranchClass, groundSnow0lowBranchNumClass = defineLowVegClass(allSnowClass)
-for gsclss in range(len(groundSnow0lowBranchClass)):
-    for gsdim in range (len(groundSnow0lowBranchClass[gsclss])):
-        if groundSnow0lowBranchClass[gsclss][gsdim][0][2]>=2:
-            print gsclss
-            #groundSnow0lowBranchClass2 = np.delete(groundSnow0lowBranchClass,gsclss[gsdim])
-#%%
-fig4 = plt.figure(figsize=(20,15))
-ax4 = Axes3D(fig4)
+# "******************tall canopy snow class*******************"
+#snow on the tall canopy >2m
+treeSnowClass, treeSnowNumClass = defineSpecificClassGreater (allSnowClass, 2)
+# "******************open snow class**************************"
+#snow on the ground
+groundSnowClass, groundSnowNumClass = differenceBetwee2classes (allSnowClass,treeSnowNumClass)
+
+#for gsclss in range(len(groundSnow0lowBranchClass)):
+#    for gsdim in range (len(groundSnow0lowBranchClass[gsclss])):
+#        if groundSnow0lowBranchClass[gsclss][gsdim][0][2]>=2:
+#            print gsclss
+#            #groundSnow0lowBranchClass2 = np.delete(groundSnow0lowBranchClass,gsclss[gsdim])
+#%% ploting
+#fig4 = plt.figure(figsize=(20,15))
+#ax4 = Axes3D(fig4)
 #ax4.scatter(dem_groundPoints[:, 0], dem_groundPoints[:, 1])#, dem_groundPoints[:, 2])
 
-for clss in allSnowClass:
-    for dim in range (len(clss)):
-        ax4.scatter(clss[dim][0][0], clss[dim][0][1], clss[dim][0][2])
+#for clss1 in allOpenClass:
+#    for dim1 in range (len(clss1)):
+#        ax4.scatter(clss1[dim1][0][0], clss1[dim1][0][1], clss1[dim1][0][2], c='orange')
+#for clss in groundSnowClass:
+#    for dim in range (len(clss)):
+#        ax4.scatter(clss[dim][0][0], clss[dim][0][1], clss[dim][0][2], c='green')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #%%
 #Y
