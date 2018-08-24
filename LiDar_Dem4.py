@@ -207,6 +207,16 @@ for flcl in failclass:
 #ax.scatter([x[0] for x in classes1[25]], [x[1] for x in classes1[25]])
 plt.savefig('lidardata\dem_lidar_classificationtest.png')
 #%% vegtation classification from DEM2014 and las2014
+
+vegClass2 = []
+classes_rplc2 = []#[x if np.size(x)!= 0 else [0,0,0] for x in classes1]
+for cls in range (len (dem_groundPoints)):
+    if len(classesVeg[cls])==0:
+        nokhale = [np.array([0,0,0])]
+        classes_rplc2.append(nokhale)
+    else: classes_rplc2.append(classesVeg[cls])
+    vegClass2.append(classes_rplc2[cls]-dem_groundPoints[cls])
+    
 vegClass1 = []
 classes_rplc = []#[x if np.size(x)!= 0 else [0,0,0] for x in classes1]
 for cls in range (len (dem_groundPoints)):
@@ -214,8 +224,12 @@ for cls in range (len (dem_groundPoints)):
         nokhale = [np.array([0,0,0])]
         classes_rplc.append(nokhale)
     else: classes_rplc.append(classesVeg[cls])
+    test = []
+    for tst in range(len(classes_rplc[cls])):
+        height = classes_rplc[cls][tst][2]-dem_groundPoints[cls][2]
+        test.append(np.vstack([classes_rplc[cls][tst][0],classes_rplc[cls][tst][1],height]).T)
+    vegClass1.append(test)
 
-    vegClass1.append(classes_rplc[cls]-dem_groundPoints[cls])
 #all tree classification
 allTreeClass = []
 numTreeClass = []
