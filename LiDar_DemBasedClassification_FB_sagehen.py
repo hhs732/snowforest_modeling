@@ -169,7 +169,7 @@ pathNameS0f = 'lidardata\SagehenLasDEM\dem_snow0ff_sagehen.png'
 elevationVeg = readPlotDEM(filenameS0f,elevationMissNoS0f,pathNameS0f)
 dem_groundPointsVeg = creatingCentroidGroundpointsFromDem(filenameS0f,elevationMissNoS0f)#,pathNameS)
 #sagehen_demGroundPoint_veg = dem_groundPointsVeg[np.where((dem_groundPointsVeg[:,0]==sagehen_demGroundPoint_snow[:,0]))] #and (dem_groundPointsVeg[:,1]==sagehen_demGroundPoint_snow[:,1]))] #SagehenGP = [z for z in dem_groundPointsSnow if z[2]>1900]
-
+print 'now'
 sagehen_demGroundPoint_VegIndex = []
 for z in sagehen_demGroundPoint_snow:
       sagehen_demGroundPoint_VegIndex.append(np.where(dem_groundPointsVeg[:,0:2]==z[0:2]))

@@ -1,4 +1,19 @@
-###       /bin/bash runTestCases_docker.sh
+###       /bin/bash runTestCases_dockerSC.sh
+#model output
+#scalarSnowDepth           | 1
+#scalarCanairNetNrgFlux    | 1
+#scalarCanopyNetNrgFlux    | 1
+#scalarGroundNetNrgFlux    | 1
+#scalarBelowCanopySolar    | 1
+#scalarCanopyAbsorbedSolar | 1
+#scalarGroundAbsorbedSolar | 1
+#scalarLWNetGround         | 1
+#scalarLWNetUbound         | 1
+#scalarLWNetCanopy         | 1
+#scalarLatHeatTotal        | 1 
+#scalarSenHeatTotal        | 1 
+#scalarSnowSublimation     | 1
+
 import numpy as np
 import matplotlib.pyplot as plt 
 from netCDF4 import Dataset,netcdftime,num2date
@@ -28,23 +43,20 @@ swe_obs_df.set_index(sc_swe_obs_date,inplace=True)
 #max_swe_obs = max(obs_swe['swe_mm'])
 #max_swe_date_obs = obs_swe[obs_swe ['swe_mm']== max_swe_obs].index.tolist()    
 #%%
-hruidxID = list(np.arange(101,105))
+hruidxID = list(np.arange(101,102))
 hru_num = np.size(hruidxID)
-out_names = ['lm2p2']#, 'sm1', 'sm2', 'lm1', 'lm2']
-paramModel = (np.size(out_names))*(hru_num)
-hru_names =[]
-for i in out_names:
-    hru_names.append(['{}{}'.format(i, j) for j in hruidxID])
-hru_names1 = np.reshape(hru_names,(paramModel,1))
-hru_names_df = pd.DataFrame (hru_names1)
+#out_names = ['lm2p2']#, 'sm1', 'sm2', 'lm1', 'lm2']
+#paramModel = (np.size(out_names))*(hru_num)
+#hru_names =[]
+#for i in out_names:
+#    hru_names.append(['{}{}'.format(i, j) for j in hruidxID])
+#hru_names1 = np.reshape(hru_names,(paramModel,1))
+hru_names = ['baseT1']
+hru_names_df = pd.DataFrame (hru_names)
 #%% reading output_swe files
-av_ncfiles = [
-#              "sagehen_sm1_2015-2016_senatorVariableDecayRate_1.nc",
-#              "sagehen_lm1_2015-2016_senatorVariableDecayRate_1.nc",
-#              "sagehen_sm2_2015-2016_senatorVariableDecayRate_1.nc",
-#              "sagehen_lm2_2015-2016_senatorVariableDecayRate_1.nc"
-              "sagehen_lm2_p2_2015-2016_senatorVariableDecayRate_1.nc"
-              ]
+av_ncfiles = ["initialResults_sc\sagehen_T1_baseS_2015-2016_senatorVariableDecayRate_18.nc",
+              "initialResults_sc\sagehen_T1_baseS_2016-2017_senatorVariableDecayRate_18.nc",
+             ]
 av_all = []
 for ncfiles in av_ncfiles:
     av_all.append(Dataset(ncfiles))
@@ -62,11 +74,15 @@ for varname in av_all[0].variables.keys():
 av_swe = []
 for dfs in av_all:
     av_swe.append(pd.DataFrame(dfs['scalarSWE'][:]))
-av_swe_df = pd.concat (av_swe, axis=1)
+#av_swe_df = pd.concat (av_swe, axis=1)
+av_swe_df = pd.concat (av_swe, ignore_index=True)
 av_swe_df.columns = hru_names_df[0]
 
 #%% output time step
-TimeSc = av_all[0].variables['time'][:] # get values
+TimeSc16 = av_all[0].variables['time'][:] # get values
+TimeSc17 = av_all[1].variables['time'][:] # get values
+TimeSc = np.concatenate((TimeSc16,TimeSc17), axis=0)
+
 t_unitSc = av_all[0].variables['time'].units # get unit  "days since 1950-01-01T00:00:00Z"
 
 try :
@@ -81,57 +97,73 @@ tvalueSc = num2date(TimeSc, units=t_unitSc, calendar=t_cal)
 DateSc = [i.strftime("%Y-%m-%d %H:%M") for i in tvalueSc] # -%d %H:%M to display dates as string #i.strftime("%Y-%m-%d %H:%M")        
 #%% day of snow disappearance-final output
 av_swe_df.set_index(pd.DatetimeIndex(DateSc),inplace=True)
-counter = pd.DataFrame(np.arange(0,np.size(av_swe_df['lm2p2101'])),columns=['counter'])
+counter = pd.DataFrame(np.arange(0,np.size(av_swe_df['baseT1'])),columns=['counter'])
 counter.set_index(av_swe_df.index,inplace=True)
 av_swe_df2 = pd.concat([counter, av_swe_df], axis=1)
-#%%   
-av_swe_df4000 = av_swe_df2[:][4000:8737]
+#%%   calculating day of snow disapperance
+av_swe_df4000 = av_swe_df2[:][4000:8784]
+av_swe_df13000 = av_swe_df2[:][13000:17137]
 
 zerosnowdate = []
 for val in hru_names_df[0]:
     zerosnowdate.append(np.where(av_swe_df4000[val]==0))
+    zerosnowdate.append(np.where(av_swe_df13000[val]==0))
+
 zerosnowdate_omg = [item[0] for item in zerosnowdate] #change tuple to array
-for i,item in enumerate(zerosnowdate_omg):
-    if len(item) == 0:
-        zerosnowdate_omg[i] = 3737
-for i,item in enumerate(zerosnowdate_omg):
-    zerosnowdate_omg[i] = zerosnowdate_omg[i]+4000
-        
-first_zerosnowdate =[]
-for i,item in enumerate(zerosnowdate_omg):
-    if np.size(item)>1:
-        #print np.size(item)
-        first_zerosnowdate.append(item[0])
-    if np.size(item)==1:
-        first_zerosnowdate.append(item)
+
+for i,item in enumerate(zerosnowdate_omg[0]):
+    if np.size(item) == 0:
+        zerosnowdate_omg[0][i] = 4783
+for i,item in enumerate(zerosnowdate_omg[0]):
+    zerosnowdate_omg[0][i] = zerosnowdate_omg[0][i]+4000
+
+for i,item in enumerate(zerosnowdate_omg[1]):
+    if np.size(item) == 0:
+        zerosnowdate_omg[1][i] = 4136
+for i,item in enumerate(zerosnowdate_omg[1]):
+    zerosnowdate_omg[1][i] = zerosnowdate_omg[1][i]+13000
+       
+first_zerosnowdate =[zerosnowdate_omg[0][0],zerosnowdate_omg[1][0]]
+#for years in zerosnowdate_omg:
+#    for i,item in enumerate(years):
+#        if np.size(item)>1:
+#            first_zerosnowdate.append(item[0])
+#        if np.size(item)==1:
+#            first_zerosnowdate.append(item)
     
 first_zerosnowdate_df = pd.DataFrame(np.array(first_zerosnowdate)).T
-first_zerosnowdate_df.columns = hru_names_df
+first_zerosnowdate_df.columns = ['2015','2016']
 #first_zerosnowdate_df_obs = pd.DataFrame(np.array([[5985],[6200]]).T,columns=out_names)
-first_zerosnowdate_df_obs = pd.DataFrame(np.array([4692]),columns=['2015'])
+obs_sddate = np.array([np.array([4704]),np.array([14604])]).T
+first_zerosnowdate_df_obs = pd.DataFrame(obs_sddate,columns=['2015','2016'])
 
 zerosnowdate_residual=[]
-for hru in first_zerosnowdate_df.columns:
-    zerosnowdate_residual.append((first_zerosnowdate_df[hru][0]-first_zerosnowdate_df_obs['2015'])/24)
+for years in first_zerosnowdate_df.columns:
+    zerosnowdate_residual.append((first_zerosnowdate_df[years][0]-first_zerosnowdate_df_obs[years])/24)
 
-zerosnowdate_residual_df = pd.DataFrame(np.reshape(np.array(zerosnowdate_residual),(np.size(out_names),hru_num)).T, columns=out_names)
+#zerosnowdate_residual_df = pd.DataFrame(np.reshape(np.array(zerosnowdate_residual),(np.size(hru_names_df[0]),hru_num)).T, columns=['2015','2016'])
+zerosnowdate_residual_df = pd.DataFrame(np.reshape(np.array(zerosnowdate_residual),(2,1)).T, columns=['2015','2016'])
 
 #%%
 
-for namefile in out_names:
-    x = list(np.arange(1,5))
-    fig = plt.figure(figsize=(20,15))
-    plt.bar(x,zerosnowdate_residual_df[namefile])
-    plt.title(namefile, fontsize=42)
-    plt.xlabel('hrus',fontsize=30)
-    plt.ylabel('residual dosd (day)', fontsize=30)
+#for years in zerosnowdate_residual_df.columns:
+x1 = list(np.arange(1,2))
+x2 = list(np.arange(2,3))
+
+fig = plt.figure(figsize=(20,15))
+plt.bar(x1,zerosnowdate_residual_df['2015'])
+plt.bar(x2,zerosnowdate_residual_df['2016'])
+
+plt.title('residual dosd (day)', fontsize=42)
+plt.xlabel('years',fontsize=30)
+plt.ylabel('residual dosd (day)', fontsize=30)
     #vax.yaxis.set_label_coords(0.5, -0.1) 
-    plt.savefig(namefile)
+plt.savefig('initialResults_sc\dosd_scT1_n8')
 
 #%%
-DateSc2 = [i.strftime("%Y-%m-%d") for i in tvalueSc]
-sax = np.arange(0,np.size(DateSc2))
-sa_xticks = DateSc2
+DateSc_2 = [i.strftime("%Y-%m") for i in tvalueSc]
+sax = np.arange(0,np.size(DateSc))
+sa_xticks = DateSc_2
 safig, saax = plt.subplots(1,1, figsize=(20,15))
 plt.xticks(sax, sa_xticks[::1000], rotation=25, fontsize=20)
 saax.xaxis.set_major_locator(ticker.AutoLocator())
@@ -141,12 +173,12 @@ for hru in av_swe_df.columns:
 
 plt.plot(swe_obs_df, 'k', markersize=10)
 
-plt.title('rainbow_SWE', position=(0.04, 0.88), ha='left', fontsize=40)
-plt.xlabel('Time 2015-2016', fontsize=30)
+plt.title('SWE (mm)', position=(0.04, 0.88), ha='left', fontsize=40)
+plt.xlabel('Time 2015-2017', fontsize=30)
 plt.ylabel('SWE(mm)', fontsize=30)
 plt.legend()
 #plt.show()
-plt.savefig('swelm2p2.png')
+plt.savefig('initialResults_sc\sweScT1_n8.png')
 #%%
 
 
